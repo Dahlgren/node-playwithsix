@@ -45,7 +45,7 @@ function resolveDependencies(mods, mod) {
 
 function selectMirror(mirrors) {
   var rsyncMirrors = mirrors.filter(function (mirror) {
-    return mirror.url.toLowerCase().indexOf('rsync://') == 0;
+    return mirror.url.toLowerCase().indexOf('rsync://') === 0;
   });
 
   return rsyncMirrors[Math.floor(Math.random()*rsyncMirrors.length)].url;
