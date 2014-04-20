@@ -25,6 +25,10 @@ Can either be used as a command line tool or a module
 Destination folder where a `.pws` directory will be created
 to contain metadata and compressed filed
 
+### fetchMods(callback)
+
+Get all metadata about mods available from PlayWithSix
+
 # TODO
 
 Windows support

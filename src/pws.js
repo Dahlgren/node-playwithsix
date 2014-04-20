@@ -7,19 +7,25 @@ function downloadPWSData(cb) {
     if (err) {
       cb(null, null, err);
     } else {
-      api.mods(function (result, err) {
-        var mods = {};
-
-        if (err) {
-          cb(mirrors, null, err);
-        } else {
-          result.forEach(function (mod) {
-            mods[mod.name.toLowerCase()] = mod;
-          });
-
-          cb(mirrors, mods, null);
-        }
+      fetchMods(function (mods, err) {
+        cb(mirrors, mods, err);
       });
+    }
+  });
+}
+
+function fetchMods(cb) {
+  api.mods(function (result, err) {
+    var mods = {};
+
+    if (err) {
+      cb(null, err);
+    } else {
+      result.forEach(function (mod) {
+        mods[mod.name.toLowerCase()] = mod;
+      });
+
+      cb(mods, null);
     }
   });
 }
@@ -67,4 +73,5 @@ function downloadMod(destination, mod, cb) {
 
 module.exports = {
   downloadMod: downloadMod,
+  fetchMods: fetchMods,
 };
