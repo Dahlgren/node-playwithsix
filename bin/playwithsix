@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+
+"use strict"
+var fs = require('fs');
+var path = require('path');
+
+var pws = require('../src/pws');
+
+if (process.argv.length < 4) {
+  console.error("PlayWithSix requires a destination folder and mod as paremeters");
+  process.exit(1);
+}
+
+var destination = path.resolve(process.argv[2]);
+var mod = process.argv[3].toLowerCase();
+
+pws.downloadMod(destination, mod, function(mods, err) {
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  } else {
+    console.log(mods);
+  };
+});

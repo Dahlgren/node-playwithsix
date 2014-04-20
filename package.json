@@ -1,0 +1,30 @@
+{
+  "name": "playwithsix",
+  "version": "0.0.0",
+  "description": "Interaction with Six Updater",
+  "homepage": "https://github.com/Dahlgren/node-playwithsix",
+  "keywords": [
+    "playwithsix",
+    "arma"
+  ],
+  "author": {
+    "name": "Björn Dahlgren",
+    "email": "bjorn@dahlgren.at",
+    "url": "http://dahlgren.at/"
+  },
+  "bin": {
+    "playwithsix": "./bin/playwithsix"
+  },
+  "main": "./src/pws.js",
+  "dependencies": {
+    "request": "~2.34.0",
+    "rsync": "^0.3.0",
+    "async": "^0.7.0",
+    "fs.extra": "^1.2.1"
+  },
+  "license": "MIT",
+  "repository": {
+    "type" : "git",
+    "url" : "http://github.com/Dahlgren/node-playwithsix.git"
+  }
+}
