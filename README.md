@@ -20,6 +20,10 @@ Can either be used as a command line tool or a module
 
     require('playwithsix')
 
+### checkOutdated(destination, callback)
+
+Find outdated mods which have previously been downloaded from PlayWithSix
+
 ### downloadMod(destination, mod, callback)
 
 Destination folder where a `.pws` directory will be created
