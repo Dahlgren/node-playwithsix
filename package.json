@@ -20,7 +20,8 @@
     "request": "~2.34.0",
     "rsync": "^0.3.0",
     "async": "^0.7.0",
-    "fs.extra": "^1.2.1"
+    "fs.extra": "^1.2.1",
+    "js-yaml": "^3.0.2"
   },
   "license": "MIT",
   "repository": {
