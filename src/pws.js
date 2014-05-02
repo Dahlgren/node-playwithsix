@@ -40,7 +40,11 @@ function resolveDependencies(mods, mod) {
     });
   }
 
-  return dependencies;
+  // Remove duplicates
+  return dependencies.reduce(function(a,b){
+    if (a.indexOf(b) < 0 ) a.push(b);
+    return a;
+  },[]);
 }
 
 function selectMirror(mirrors) {
