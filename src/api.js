@@ -4,16 +4,16 @@ var request = require('request');
 var rootUrl = 'http://api-cdn.withsix.com/api/v1';
 
 function getData(path, cb) {
-  request(rootUrl + path, function (error, response, body) {
-    if (!error && response.statusCode == 200) {
+  request(rootUrl + path, function (err, response, body) {
+    if (!err && response.statusCode == 200) {
       var json = JSON.parse(body);
 
       if (cb) {
-        cb(json, null);
+        cb(null, json);
       }
     } else {
       if (cb) {
-        cb(null, error);
+        cb(err, null);
       }
     }
   });

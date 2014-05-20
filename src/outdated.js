@@ -23,7 +23,7 @@ function checkMod(mods, mod, modPath, cb) {
 function checkMods(directory, mods, cb) {
   fs.readdir(directory, function (err, files) {
     if (err) {
-      cb(null, err);
+      cb(err, null);
     } else {
       var presetMods = files.filter(function (file) {
         return mods[file] !== undefined;
@@ -32,9 +32,9 @@ function checkMods(directory, mods, cb) {
       async.filter(presetMods, function(mod, callback) {
         var modPath = path.join(directory, mod);
         checkMod(mods, mod, modPath, callback);
-      }, function(outdatedMods, err){
+      }, function(err, outdatedMods){
         if (cb) {
-          cb(outdatedMods, err);
+          cb(err, outdatedMods);
         }
       });
     }

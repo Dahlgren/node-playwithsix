@@ -4,29 +4,29 @@ var download = require('./download');
 var outdated = require('./outdated');
 
 function downloadPWSData(cb) {
-  api.mirrors(function (mirrors, err) {
+  api.mirrors(function (err, mirrors) {
     if (err) {
-      cb(null, null, err);
+      cb(err, null, null);
     } else {
-      fetchMods(function (mods, err) {
-        cb(mirrors, mods, err);
+      fetchMods(function (err, mods) {
+        cb(err, mirrors, mods);
       });
     }
   });
 }
 
 function fetchMods(cb) {
-  api.mods(function (result, err) {
+  api.mods(function (err, result) {
     var mods = {};
 
     if (err) {
-      cb(null, err);
+      cb(err, null);
     } else {
       result.forEach(function (mod) {
         mods[mod.name.toLowerCase()] = mod;
       });
 
-      cb(mods, null);
+      cb(null, mods);
     }
   });
 }
@@ -56,9 +56,9 @@ function selectMirror(mirrors) {
 }
 
 function checkOutdated(directory, cb) {
-  fetchMods(function (mods, err) {
+  fetchMods(function (err, mods) {
     if (mods === null || err) {
-      cb(null, err);
+      cb(err, null);
     } else {
       outdated(directory, mods, cb);
     }
@@ -68,19 +68,19 @@ function checkOutdated(directory, cb) {
 function downloadMod(destination, mod, cb) {
   destination = destination + "/";
 
-  downloadPWSData(function (mirrors, mods, err) {
+  downloadPWSData(function (err, mirrors, mods) {
     if (mirrors === null || mods === null || err) {
-      cb(null, err);
+      cb(err, null);
     } else {
       if (mods[mod]) {
         var mirror = selectMirror(mirrors);
 
         var toDownload = [mod].concat(resolveDependencies(mods, mod));
         download(mirror, destination, toDownload, function (err) {
-          cb(toDownload, err);
+          cb(err, toDownload);
         });
       } else {
-        cb(null, 'Mod not found on Six Updater');
+        cb(new Error('Mod not found on Six Updater'), null);
       }
     }
   });

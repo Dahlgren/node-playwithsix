@@ -14,7 +14,7 @@ if (process.argv.length < 4) {
 var destination = path.resolve(process.argv[2]);
 var mod = process.argv[3].toLowerCase();
 
-pws.downloadMod(destination, mod, function(mods, err) {
+pws.downloadMod(destination, mod, function(err, mods) {
   if (err) {
     console.error(err);
     process.exit(1);
