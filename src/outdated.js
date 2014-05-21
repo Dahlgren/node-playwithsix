@@ -32,7 +32,7 @@ function checkMods(directory, mods, cb) {
       async.filter(presetMods, function(mod, callback) {
         var modPath = path.join(directory, mod);
         checkMod(mods, mod, modPath, callback);
-      }, function(err, outdatedMods){
+      }, function(outdatedMods){
         if (cb) {
           cb(err, outdatedMods);
         }
