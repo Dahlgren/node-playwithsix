@@ -1,5 +1,6 @@
 "use strict";
 var api = require('./api');
+var dependencies = require('./dependencies');
 var download = require('./download');
 var outdated = require('./outdated');
 
@@ -40,39 +41,9 @@ function resolveDependencies(modsToResolve, cb) {
         return mod in mods;
       });
 
-      cb(null, resolveDependenciesForMods(mods, modsToResolve));
+      cb(null, dependencies.resolveDependenciesForMods(mods, modsToResolve));
     }
   });
-}
-
-function resolveDependenciesForMods(mods, modsToResolve) {
-  var dependencies = [];
-
-  modsToResolve.forEach(function(mod) {
-    dependencies = dependencies.concat([mod]);
-    dependencies = dependencies.concat(resolveDependenciesForMod(mods, mod));
-  });
-
-  return removeDuplicates(dependencies);
-}
-
-function resolveDependenciesForMod(mods, modToReslove) {
-  var dependencies = mods[modToReslove].dependencies;
-
-  if (mods[modToReslove].dependencies.length > 0) {
-    mods[modToReslove].dependencies.forEach(function(mod) {
-      dependencies = dependencies.concat(resolveDependenciesForMod(mods, mod));
-    });
-  }
-
-  return removeDuplicates(dependencies);
-}
-
-function removeDuplicates(mods) {
-  return mods.reduce(function(a,b){
-    if (a.indexOf(b) < 0 ) a.push(b);
-    return a;
-  },[]);
 }
 
 function selectMirror(mirrors) {
@@ -113,7 +84,7 @@ function downloadMods(destination, modsToDownload, cb) {
 
       var mirror = selectMirror(mirrors);
 
-      var toDownload = resolveDependenciesForMods(mods, modsToDownload);
+      var toDownload = dependencies.resolveDependenciesForMods(mods, modsToDownload);
 
       download(mirror, destination, toDownload, function (err) {
         cb(err, toDownload);
