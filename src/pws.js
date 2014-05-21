@@ -75,20 +75,24 @@ function downloadMods(destination, modsToDownload, cb) {
     if (mirrors === null || mods === null || err) {
       cb(err, null);
     } else {
+      var modsNotFound = [];
       modsToDownload.forEach(function(mod) {
-        if (!mods[mod]) {
-          cb(new Error(mod + ' not found on Six Updater'), null);
-          return;
+        if (!(mod in mods)) {
+          modsNotFound.push(mod);
         }
       });
 
-      var mirror = selectMirror(mirrors);
+      if (modsNotFound.length > 0) {
+        cb(new Error(modsNotFound.join(', ') + ' not found on Six Updater'), null);
+      } else {
+        var mirror = selectMirror(mirrors);
 
-      var toDownload = dependencies.resolveDependenciesForMods(mods, modsToDownload);
+        var toDownload = dependencies.resolveDependenciesForMods(mods, modsToDownload);
 
-      download(mirror, destination, toDownload, function (err) {
-        cb(err, toDownload);
-      });
+        download(mirror, destination, toDownload, function (err) {
+          cb(err, toDownload);
+        });
+      }
     }
   });
 }
