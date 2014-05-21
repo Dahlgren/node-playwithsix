@@ -31,17 +31,31 @@ function fetchMods(cb) {
   });
 }
 
-function resolveDependencies(mods, mod) {
-  var dependencies = mods[mod].dependencies;
+function resolveDependenciesForMods(mods, modsToResolve) {
+  var dependencies = [];
 
-  if (mods[mod].dependencies.length > 0) {
-    mods[mod].dependencies.forEach(function(_mod) {
-      dependencies = dependencies.concat(resolveDependencies(mods, _mod));
+  modsToResolve.forEach(function(mod) {
+    dependencies = dependencies.concat([mod]);
+    dependencies = dependencies.concat(resolveDependenciesForMod(mods, mod));
+  });
+
+  return removeDuplicates(dependencies);
+}
+
+function resolveDependenciesForMod(mods, modToReslove) {
+  var dependencies = mods[modToReslove].dependencies;
+
+  if (mods[modToReslove].dependencies.length > 0) {
+    mods[modToReslove].dependencies.forEach(function(mod) {
+      dependencies = dependencies.concat(resolveDependenciesForMod(mods, mod));
     });
   }
 
-  // Remove duplicates
-  return dependencies.reduce(function(a,b){
+  return removeDuplicates(dependencies);
+}
+
+function removeDuplicates(mods) {
+  return mods.reduce(function(a,b){
     if (a.indexOf(b) < 0 ) a.push(b);
     return a;
   },[]);
@@ -66,22 +80,30 @@ function checkOutdated(directory, cb) {
 }
 
 function downloadMod(destination, mod, cb) {
+  downloadMods(destination, [mod], cb);
+}
+
+function downloadMods(destination, modsToDownload, cb) {
   destination = destination + "/";
 
   downloadPWSData(function (err, mirrors, mods) {
     if (mirrors === null || mods === null || err) {
       cb(err, null);
     } else {
-      if (mods[mod]) {
-        var mirror = selectMirror(mirrors);
+      modsToDownload.forEach(function(mod) {
+        if (!mods[mod]) {
+          cb(new Error(mod + ' not found on Six Updater'), null);
+          return;
+        }
+      });
 
-        var toDownload = [mod].concat(resolveDependencies(mods, mod));
-        download(mirror, destination, toDownload, function (err) {
-          cb(err, toDownload);
-        });
-      } else {
-        cb(new Error('Mod not found on Six Updater'), null);
-      }
+      var mirror = selectMirror(mirrors);
+
+      var toDownload = resolveDependenciesForMods(mods, modsToDownload);
+
+      download(mirror, destination, toDownload, function (err) {
+        cb(err, toDownload);
+      });
     }
   });
 }
@@ -89,5 +111,6 @@ function downloadMod(destination, mod, cb) {
 module.exports = {
   checkOutdated: checkOutdated,
   downloadMod: downloadMod,
+  downloadMods: downloadMods,
   fetchMods: fetchMods,
 };
