@@ -5,18 +5,20 @@ function resolveDependenciesForMods(mods, modsToResolve) {
 
   modsToResolve.forEach(function(mod) {
     dependencies = dependencies.concat([mod]);
-    dependencies = dependencies.concat(resolveDependenciesForMod(mods, mod));
+    dependencies = dependencies.concat(resolveDependenciesForMod(mods, mod, []));
   });
 
   return removeDuplicates(dependencies);
 }
 
-function resolveDependenciesForMod(mods, modToReslove) {
-  var dependencies = mods[modToReslove].dependencies;
+function resolveDependenciesForMod(mods, modToResolve, alreadyResolved) {
+  var dependencies = mods[modToResolve].dependencies;
 
-  if (mods[modToReslove].dependencies.length > 0) {
-    mods[modToReslove].dependencies.forEach(function(mod) {
-      dependencies = dependencies.concat(resolveDependenciesForMod(mods, mod));
+  if (mods[modToResolve].dependencies.length > 0) {
+    mods[modToResolve].dependencies.forEach(function(mod) {
+      if (alreadyResolved.indexOf(mod) != -1) {
+        dependencies = dependencies.concat(resolveDependenciesForMod(mods, mod, alreadyResolved.concat([mod])));
+      }
     });
   }
 
