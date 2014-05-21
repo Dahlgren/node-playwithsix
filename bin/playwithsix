@@ -6,19 +6,53 @@ var path = require('path');
 
 var pws = require('../src/pws');
 
-if (process.argv.length < 4) {
-  console.error("PlayWithSix requires a destination folder and mod as paremeters");
+if (process.argv.length < 3) {
+  console.error("PlayWithSix requires an action");
   process.exit(1);
 }
 
-var destination = path.resolve(process.argv[2]);
-var mod = process.argv[3].toLowerCase();
+var destination = process.cwd();
+var action = process.argv[2];
 
-pws.downloadMod(destination, mod, function(err, mods) {
-  if (err) {
-    console.error(err);
+if (action === "install") {
+  if (process.argv.length < 4) {
+    console.error("PlayWithSix installation requires at least one mod");
     process.exit(1);
-  } else {
-    console.log(mods);
-  };
-});
+  }
+
+  var mods = process.argv.slice(3);
+
+  pws.downloadMods(destination, mods, function(err, mods) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    } else {
+      console.log(mods);
+    };
+  });
+} else if (action === "outdated") {
+  pws.checkOutdated(destination, function(err, mods) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    } else {
+      console.log(mods);
+    };
+  });
+} else if (action === "update") {
+  pws.checkOutdated(destination, function(err, mods) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    } else {
+      pws.downloadMods(destination, mods, function(err, mods) {
+        if (err) {
+          console.error(err);
+          process.exit(1);
+        } else {
+          console.log(mods);
+        };
+      });
+    };
+  });
+}

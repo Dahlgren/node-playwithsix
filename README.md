@@ -12,13 +12,31 @@ Can either be used as a command line tool or a module
 
 ## Command Line
 
+Commands are executed with current working directory as folder
+
 ### Download mod
 
-`playwithsix destination mod`
+`playwithsix install mod1 mod2 mod3...`
+
+Install one or more mods
+
+### Outdated mod
+
+`playwithsix outdated`
+
+List outdated mods
+
+### Update mod
+
+`playwithsix update`
+
+Update all outdated mods
 
 ## Module
 
-    require('playwithsix')
+  npm install playwithsix
+
+  require('playwithsix')
 
 ### checkOutdated(destination, callback)
 
