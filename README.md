@@ -38,16 +38,19 @@ Update all outdated mods
 
   require('playwithsix')
 
-### checkOutdated(destination, callback)
+### checkOutdated(destination, callback(err, mods))
 
 Find outdated mods which have previously been downloaded from PlayWithSix
 
-### downloadMod(destination, mod, callback)
+### downloadMod(destination, mod, callback(err, mods))
+### downloadMods(destination, mod, callback(err, mods))
 
 Destination folder where a `.pws` directory will be created
 to contain metadata and compressed filed
 
-### fetchMods(callback)
+Result will contain list of downloaded mods
+
+### fetchMods(callback(err, mods))
 
 Get all metadata about mods available from PlayWithSix
 
