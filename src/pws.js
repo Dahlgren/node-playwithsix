@@ -31,6 +31,20 @@ function fetchMods(cb) {
   });
 }
 
+function resolveDependencies(modsToResolve, cb) {
+  downloadPWSData(function (err, mirrors, mods) {
+    if (mods === null || err) {
+      cb(err, null);
+    } else {
+      modsToResolve = modsToResolve.filter(function(mod) {
+        return mod in mods;
+      });
+
+      cb(null, resolveDependenciesForMods(mods, modsToResolve));
+    }
+  });
+}
+
 function resolveDependenciesForMods(mods, modsToResolve) {
   var dependencies = [];
 
@@ -113,4 +127,5 @@ module.exports = {
   downloadMod: downloadMod,
   downloadMods: downloadMods,
   fetchMods: fetchMods,
+  resolveDependencies: resolveDependencies,
 };

@@ -14,7 +14,23 @@ if (process.argv.length < 3) {
 var destination = process.cwd();
 var action = process.argv[2];
 
-if (action === "install") {
+if (action === "dependencies") {
+  if (process.argv.length < 4) {
+    console.error("PlayWithSix dependencies requires at least one mod");
+    process.exit(1);
+  }
+
+  var mods = process.argv.slice(3);
+
+  pws.resolveDependencies(mods, function(err, mods) {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    } else {
+      console.log(mods);
+    };
+  });
+} else if (action === "install") {
   if (process.argv.length < 4) {
     console.error("PlayWithSix installation requires at least one mod");
     process.exit(1);

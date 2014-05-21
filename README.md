@@ -54,6 +54,10 @@ Result will contain list of downloaded mods
 
 Get all metadata about mods available from PlayWithSix
 
+### resolveDependencies(mods, callback(err, mods))
+
+Calculate needed mods from PlayWithSix for inputed list of mods
+
 # TODO
 
 Windows support
