@@ -15,6 +15,9 @@
   "bin": {
     "playwithsix": "./bin/playwithsix"
   },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha"
+  },
   "main": "./src/pws.js",
   "dependencies": {
     "request": "~2.34.0",
@@ -22,6 +25,10 @@
     "async": "^0.7.0",
     "fs.extra": "^1.2.1",
     "js-yaml": "^3.0.2"
+  },
+  "devDependencies": {
+    "mocha": "~1.19.0",
+    "should": "~3.3.2"
   },
   "license": "MIT",
   "repository": {
