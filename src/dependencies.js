@@ -13,14 +13,13 @@ function resolveDependenciesForMods(mods, modsToResolve) {
 
 function resolveDependenciesForMod(mods, modToResolve, alreadyResolved) {
   var dependencies = mods[modToResolve].dependencies;
+  alreadyResolved = alreadyResolved.concat([modToResolve]);
 
-  if (mods[modToResolve].dependencies.length > 0) {
-    mods[modToResolve].dependencies.forEach(function(mod) {
-      if (alreadyResolved.indexOf(mod) != -1) {
-        dependencies = dependencies.concat(resolveDependenciesForMod(mods, mod, alreadyResolved.concat([mod])));
-      }
-    });
-  }
+  dependencies.forEach(function(mod) {
+    if (alreadyResolved.indexOf(mod) === -1) {
+      dependencies = dependencies.concat(resolveDependenciesForMod(mods, mod, alreadyResolved));
+    }
+  });
 
   return removeDuplicates(dependencies);
 }
