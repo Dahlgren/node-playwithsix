@@ -1,6 +1,6 @@
 # PlayWithSix
 
-[![Build Status](https://travis-ci.org/Dahlgren/node-playwithsix.svg)](http://travis-ci.org/dahlgren/node-playwithsix)
+[![Build Status](https://travis-ci.org/Dahlgren/node-playwithsix.svg)](http://travis-ci.org/Dahlgren/node-playwithsix)
 [![Dependency Status](https://david-dm.org/dahlgren/node-playwithsix.png)](https://david-dm.org/dahlgren/node-playwithsix)
 
 Node module to ease using the Play With Six service
