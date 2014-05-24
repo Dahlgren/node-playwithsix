@@ -2,8 +2,8 @@ var should = require('should');
 var api = require('../src/api');
 
 describe('api', function(){
-  describe('categories', function(done){
-    it('should return categories', function(){
+  describe('categories', function(){
+    it('should return categories', function(done){
       api.categories(function (err, categories) {
         if (err) return done(err);
         categories.should.not.be.empty;
@@ -12,8 +12,8 @@ describe('api', function(){
     });
   });
 
-  describe('families', function(done){
-    it('should return families', function(){
+  describe('families', function(){
+    it('should return families', function(done){
       api.families(function (err, families) {
         if (err) return done(err);
         families.should.not.be.empty;
@@ -22,8 +22,8 @@ describe('api', function(){
     });
   });
 
-  describe('mirrors', function(done){
-    it('should return mirrors', function(){
+  describe('mirrors', function(){
+    it('should return mirrors', function(done){
       api.families(function (err, mirrors) {
         if (err) return done(err);
         mirrors.should.not.be.empty;
@@ -32,8 +32,8 @@ describe('api', function(){
     });
   });
 
-  describe('modSets', function(done){
-    it('should return modSets', function(){
+  describe('modSets', function(){
+    it('should return modSets', function(done){
       api.families(function (err, modSets) {
         if (err) return done(err);
         modSets.should.not.be.empty;
@@ -42,8 +42,8 @@ describe('api', function(){
     });
   });
 
-  describe('mods', function(done){
-    it('should return mods', function(){
+  describe('mods', function(){
+    it('should return mods', function(done){
       api.families(function (err, mods) {
         if (err) return done(err);
         mods.should.not.be.empty;
@@ -52,8 +52,8 @@ describe('api', function(){
     });
   });
 
-  describe('networks', function(done){
-    it('should return networks', function(){
+  describe('networks', function(){
+    it('should return networks', function(done){
       api.families(function (err, networks) {
         if (err) return done(err);
         networks.should.not.be.empty;
