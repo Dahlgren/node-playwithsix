@@ -2,6 +2,7 @@ var async = require('async');
 var crypto = require('crypto');
 var fs = require('fs.extra');
 var path = require('path');
+var os = require('os');
 var recursiveReaddir = require('recursive-readdir');
 var request = require('request');
 var zlib = require('zlib');
@@ -13,7 +14,7 @@ function hashToPath(hash) {
 }
 
 function downloadFiles(mirror, destination, data, cb) {
-  async.map(Object.keys(data.files), function (file, callback) {
+  async.mapLimit(Object.keys(data.files), os.cpus().length, function (file, callback) {
     var hash = data.files[file];
     var filePath = path.join(destination, data.name, file);
 
