@@ -39,8 +39,14 @@ function downloadFile(mirror, filePath, hash, cb) {
       out.on('finish', function () {
         cb(null, hash);
       });
+      out.on('error', function (err) {
+        cb(err, null)
+      });
 
       request({url: mirror + '/objects/' + hashToPath(hash)})
+        .on('error', function (err) {
+          cb(err, null)
+        })
         .pipe(zlib.createGunzip())
         .pipe(out);
     }
