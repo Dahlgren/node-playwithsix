@@ -12,6 +12,24 @@ describe('api', function(){
     });
   });
 
+  describe('config', function(){
+    it('should return config', function(done){
+      api.config(function (err, config) {
+        if (err) return done(err);
+        config.should.not.be.empty;
+        done();
+      });
+    });
+
+    it('should return remotes', function(done){
+      api.config(function (err, config) {
+        if (err) return done(err);
+        config.remotes.should.not.be.empty;
+        done();
+      });
+    });
+  });
+
   describe('families', function(){
     it('should return families', function(done){
       api.families(function (err, families) {
@@ -57,6 +75,18 @@ describe('api', function(){
       api.families(function (err, networks) {
         if (err) return done(err);
         networks.should.not.be.empty;
+        done();
+      });
+    });
+  });
+
+  describe('packages', function(){
+    it('should return packages', function(done){
+      api.packages(function (err, packages) {
+        if (err) return done(err);
+        packages.should.be.an.Object;
+        packages.packages.should.be.an.Object;
+        packages.packages.should.not.be.empty;
         done();
       });
     });
