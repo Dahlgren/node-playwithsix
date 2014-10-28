@@ -4,15 +4,15 @@ var fs = require('fs');
 var path = require('path');
 var yaml = require('js-yaml');
 
-function checkMod(mods, mod, modPath, cb) {
-  var ymlFile = path.join(modPath, '.repository.yml');
-  fs.readFile(ymlFile, 'utf8', function (err, content) {
+function checkMod(mod, modPath, latestVersion, cb) {
+  var synqFile = path.join(modPath, '.synq.json');
+  fs.readFile(synqFile, 'utf8', function (err, content) {
     if (err) {
       cb(false);
     } else {
-      var doc = yaml.safeLoad(content);
-      if (doc && doc[':version']) {
-        cb(doc[':version'] != mods[mod].version);
+      var data = JSON.parse(content);
+      if (data && data.version) {
+        cb(data.version != latestVersion);
       } else {
         cb(false);
       }
@@ -20,7 +20,7 @@ function checkMod(mods, mod, modPath, cb) {
   });
 }
 
-function checkMods(directory, mods, cb) {
+function checkMods(directory, mods, packages, cb) {
   fs.readdir(directory, function (err, files) {
     if (err) {
       cb(err, null);
@@ -31,7 +31,15 @@ function checkMods(directory, mods, cb) {
 
       async.filter(presetMods, function(mod, callback) {
         var modPath = path.join(directory, mod);
-        checkMod(mods, mod, modPath, callback);
+
+        var modVersions = packages[mod];
+
+        if (modVersions) {
+          var version = modVersions[modVersions.length - 1];
+          checkMod(mod, modPath, version, callback);
+        } else {
+          callback(null, false);
+        }
       }, function(outdatedMods){
         if (cb) {
           cb(err, outdatedMods);

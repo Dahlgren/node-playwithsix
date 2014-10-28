@@ -1,18 +1,19 @@
 "use strict";
+var async = require('async');
+
 var api = require('./api');
+var constants = require('./constants');
 var dependencies = require('./dependencies');
-var download = require('./download');
 var outdated = require('./outdated');
+var synq = require('./synq');
 
 function downloadPWSData(cb) {
-  api.mirrors(function (err, mirrors) {
-    if (err) {
-      cb(err, null, null);
-    } else {
-      fetchMods(function (err, mods) {
-        cb(err, mirrors, mods);
-      });
-    }
+  async.parallel({
+    config: api.config,
+    mods: fetchMods,
+    packages: api.packages,
+  }, function (err, results) {
+    cb(err, results.config.remotes[constants.synq.arma3.mods], results.mods, results.packages.packages);
   });
 }
 
@@ -33,7 +34,7 @@ function fetchMods(cb) {
 }
 
 function resolveDependencies(modsToResolve, cb) {
-  downloadPWSData(function (err, mirrors, mods) {
+  downloadPWSData(function (err, mirrors, mods, packages) {
     if (mods === null || err) {
       cb(err, null);
     } else {
@@ -47,19 +48,16 @@ function resolveDependencies(modsToResolve, cb) {
 }
 
 function selectMirror(mirrors) {
-  var rsyncMirrors = mirrors.filter(function (mirror) {
-    return mirror.url.toLowerCase().indexOf('rsync://') === 0;
-  });
-
-  return rsyncMirrors[Math.floor(Math.random()*rsyncMirrors.length)].url;
+  var mirror = mirrors[Math.floor(Math.random()*mirrors.length)];
+  return mirror.replace('rsync://', 'http://').replace('zsync://', 'http://');
 }
 
 function checkOutdated(directory, cb) {
-  fetchMods(function (err, mods) {
-    if (mods === null || err) {
+  downloadPWSData(function (err, mirrors, mods, packages) {
+    if (mods === null || packages === null || err) {
       cb(err, null);
     } else {
-      outdated(directory, mods, cb);
+      outdated(directory, mods, packages, cb);
     }
   });
 }
@@ -71,8 +69,8 @@ function downloadMod(destination, mod, cb) {
 function downloadMods(destination, modsToDownload, cb) {
   destination = destination + "/";
 
-  downloadPWSData(function (err, mirrors, mods) {
-    if (mirrors === null || mods === null || err) {
+  downloadPWSData(function (err, mirrors, mods, packages) {
+    if (mirrors === null || mods === null || packages === null || err) {
       cb(err, null);
     } else {
       var modsNotFound = [];
@@ -89,9 +87,22 @@ function downloadMods(destination, modsToDownload, cb) {
 
         var toDownload = dependencies.resolveDependenciesForMods(mods, modsToDownload);
 
-        download(mirror, destination, toDownload, function (err) {
-          cb(err, toDownload);
-        });
+        async.map(toDownload, function (mod, callback) {
+          var modVersions = packages[mod];
+
+          if (modVersions) {
+            var version = modVersions[modVersions.length - 1];
+            synq.download(mirror, destination, mod, version, new function(err) {
+              if (err) {
+                callback(err, null);
+              } else {
+                callback(null, mod);
+              }
+            });
+          } else {
+            callback(new Error("Mod not found in packages", null));
+          }
+        }, cb);
       }
     }
   });
