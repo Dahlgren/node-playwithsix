@@ -92,7 +92,7 @@ function downloadMods(destination, modsToDownload, cb) {
 
           if (modVersions) {
             var version = modVersions[modVersions.length - 1];
-            synq.download(mirror, destination, mod, version, new function(err) {
+            synq.download(mirror, destination, mod, version, function(err) {
               if (err) {
                 callback(err, null);
               } else {
