@@ -2,7 +2,6 @@
 var async = require('async');
 var fs = require('fs');
 var path = require('path');
-var yaml = require('js-yaml');
 
 function checkMod(mod, modPath, latestVersion, cb) {
   var synqFile = path.join(modPath, '.synq.json');
