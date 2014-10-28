@@ -75,7 +75,7 @@ function downloadMods(destination, modsToDownload, cb) {
     } else {
       var modsNotFound = [];
       modsToDownload.forEach(function(mod) {
-        if (!(mod in mods)) {
+        if (!(mod in packages)) {
           modsNotFound.push(mod);
         }
       });

@@ -12,6 +12,10 @@ function resolveDependenciesForMods(mods, modsToResolve) {
 }
 
 function resolveDependenciesForMod(mods, modToResolve, alreadyResolved) {
+  if (!(modToResolve in mods)) {
+    return [];
+  }
+  
   var dependencies = mods[modToResolve].dependencies;
   alreadyResolved = alreadyResolved.concat([modToResolve]);
 
