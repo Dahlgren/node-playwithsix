@@ -1,4 +1,5 @@
 var async = require('async');
+var crypto = require('crypto');
 var fs = require('fs.extra');
 var path = require('path');
 var request = require('request');
@@ -13,25 +14,52 @@ function hashToPath(hash) {
 function downloadFiles(mirror, destination, data, cb) {
   async.map(Object.keys(data.files), function (file, callback) {
     var hash = data.files[file];
-
     var filePath = path.join(destination, data.name, file);
-    var folderPath = path.dirname(filePath);
 
-    fs.mkdirp(folderPath, function (err) {
-      if (err) {
-        callback(err, null);
+    calculateFileHash(filePath, function(err, fileHash) {
+      if (err || hash !== fileHash) {
+        downloadFile(mirror, filePath, hash, callback)
       } else {
-        var out = fs.createWriteStream(filePath);
-        out.on('finish', function () {
-          callback(null, hash);
-        });
-
-        request({url: mirror + '/objects/' + hashToPath(hash)})
-          .pipe(zlib.createGunzip())
-          .pipe(out);
+        callback(null, hash);
       }
     });
   }, cb);
+}
+
+function downloadFile(mirror, filePath, hash, cb) {
+  var folderPath = path.dirname(filePath);
+
+  fs.mkdirp(folderPath, function (err) {
+    if (err) {
+      cb(err, null);
+    } else {
+      var out = fs.createWriteStream(filePath);
+      out.on('finish', function () {
+        cb(null, hash);
+      });
+
+      request({url: mirror + '/objects/' + hashToPath(hash)})
+        .pipe(zlib.createGunzip())
+        .pipe(out);
+    }
+  });
+}
+
+function calculateFileHash(filePath, cb) {
+  var hash = crypto.createHash('sha1');
+  var stream = fs.createReadStream(filePath);
+
+  stream.on('data', function (data) {
+    hash.update(data, 'utf8')
+  });
+
+  stream.on('end', function () {
+    cb(null, hash.digest('hex'));
+  });
+
+  stream.on('error', function (err) {
+    cb(err, null);
+  });
 }
 
 function storePackageMetadata(destination, mod, data, cb) {
