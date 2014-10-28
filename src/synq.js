@@ -2,6 +2,7 @@ var async = require('async');
 var crypto = require('crypto');
 var fs = require('fs.extra');
 var path = require('path');
+var recursiveReaddir = require('recursive-readdir');
 var request = require('request');
 var zlib = require('zlib');
 
@@ -62,6 +63,23 @@ function calculateFileHash(filePath, cb) {
   });
 }
 
+function cleanupFiles(destination, data, cb) {
+  modPath = path.join(destination, data.name);
+  recursiveReaddir(modPath, function (err, files) {
+    async.each(files, function (file, callback) {
+      var filePath = file.replace(modPath + path.sep, '');
+
+      if (filePath in data.files) {
+        callback(null);
+      } else {
+        fs.unlink(file, function (err) {
+          callback(err);
+        });
+      }
+    }, cb)
+  });
+}
+
 function storePackageMetadata(destination, mod, data, cb) {
   var filePath = path.join(destination, mod, '.synq.json');
   var folderPath = path.dirname(filePath);
@@ -78,7 +96,9 @@ function storePackageMetadata(destination, mod, data, cb) {
 function download(mirror, destination, mod, version, cb) {
   api.package(mod, version, function (err, data) {
     downloadFiles(mirror, destination, data, function (err, objects) {
-      storePackageMetadata(destination, mod, data, cb);
+      cleanupFiles(destination, data, function (err) {
+        storePackageMetadata(destination, mod, data, cb);
+      });
     });
   });
 }
