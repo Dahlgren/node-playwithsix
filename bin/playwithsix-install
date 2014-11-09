@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+
+var pws = require('../src/pws');
+
+program
+  .option('-p, --path [value]', 'path to directory if other than cwd')
+  .parse(process.argv);
+
+var mods = program.args;
+
+if (!mods.length) {
+  console.error("PlayWithSix installation requires at least one mod");
+  process.exit(1);
+}
+
+if (!program.path) {
+  program.path = process.cwd();
+}
+
+pws.downloadMods(program.path, mods, function(err, mods) {
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  } else {
+    console.log(mods);
+  }
+});

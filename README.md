@@ -17,11 +17,19 @@ Can either be used as a command line tool or a module
 
 Commands are executed with current working directory as folder
 
+### Dependencies for mod
+
+`playwithsix dependencies mod1 mod2 mod3...`
+
+Show dependencies for one or more mods
+
 ### Download mod
 
 `playwithsix install mod1 mod2 mod3...`
 
 Install one or more mods
+
+Use `-p` or `--path` to specify a directory other than current working directory
 
 ### Outdated mod
 
@@ -29,11 +37,15 @@ Install one or more mods
 
 List outdated mods
 
+Use `-p` or `--path` to specify a directory other than current working directory
+
 ### Update mod
 
 `playwithsix update`
 
 Update all outdated mods
+
+Use `-p` or `--path` to specify a directory other than current working directory
 
 ## Module
 

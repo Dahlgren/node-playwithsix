@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+
+var pws = require('../src/pws');
+
+program
+  .option('-p, --path [value]', 'path to directory if other than cwd')
+  .parse(process.argv);
+
+if (!program.path) {
+  program.path = process.cwd();
+}
+
+pws.checkOutdated(program.path, function(err, mods) {
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  } else {
+    console.log(mods);
+  }
+});
