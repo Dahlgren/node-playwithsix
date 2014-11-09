@@ -5,10 +5,6 @@
 
 Node module to ease using the Play With Six service
 
-# Requirements
-
-The module currently depends on `gunzip` and `rsync` being present in your PATH
-
 # Usage
 
 Can either be used as a command line tool or a module
@@ -58,10 +54,10 @@ Use `-p` or `--path` to specify a directory other than current working directory
 Find outdated mods which have previously been downloaded from PlayWithSix
 
 ### downloadMod(destination, mod, callback(err, mods))
-### downloadMods(destination, mod, callback(err, mods))
+### downloadMods(destination, mods, callback(err, mods))
 
-Destination folder where a `.pws` directory will be created
-to contain metadata and compressed filed
+Path where a mod or mods will be downloaded to.
+Leftover files per mod directory will be deleted to ensure only current files are present.
 
 Result will contain list of downloaded mods
 
@@ -72,7 +68,3 @@ Get all metadata about mods available from PlayWithSix
 ### resolveDependencies(mods, callback(err, mods))
 
 Calculate needed mods from PlayWithSix for inputed list of mods
-
-# TODO
-
-Windows support
