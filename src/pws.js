@@ -13,7 +13,13 @@ function downloadPWSData(cb) {
     mods: fetchMods,
     packages: api.packages,
   }, function (err, results) {
-    cb(err, results.config.remotes[constants.synq.arma3.mods], results.mods, results.packages.packages);
+    if (err) {
+      cb(err);
+    } else if (results.config && results.mods && results.packages) {
+      cb(null, results.config.remotes[constants.synq.arma3.mods], results.mods, results.packages.packages);
+    } else {
+      cb(new Error("Unable to fetch metadata, please try again"));
+    }
   });
 }
 
