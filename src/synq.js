@@ -20,7 +20,7 @@ function downloadFiles(mirror, destination, data, cb) {
 
     calculateFileHash(filePath, function(err, fileHash) {
       if (err || hash !== fileHash) {
-        downloadFile(mirror, filePath, hash, callback)
+        downloadFile(mirror, filePath, hash, callback);
       } else {
         callback(null, hash);
       }
@@ -40,12 +40,12 @@ function downloadFile(mirror, filePath, hash, cb) {
         cb(null, hash);
       });
       out.on('error', function (err) {
-        cb(err, null)
+        cb(err, null);
       });
 
       request({url: mirror + '/objects/' + hashToPath(hash)})
         .on('error', function (err) {
-          cb(err, null)
+          cb(err, null);
         })
         .pipe(zlib.createGunzip())
         .pipe(out);
@@ -58,7 +58,7 @@ function calculateFileHash(filePath, cb) {
   var stream = fs.createReadStream(filePath);
 
   stream.on('data', function (data) {
-    hash.update(data, 'utf8')
+    hash.update(data, 'utf8');
   });
 
   stream.on('end', function () {
@@ -83,7 +83,7 @@ function cleanupFiles(destination, data, cb) {
           callback(err);
         });
       }
-    }, cb)
+    }, cb);
   });
 }
 
