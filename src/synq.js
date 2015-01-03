@@ -76,6 +76,11 @@ function cleanupFiles(destination, data, cb) {
     async.each(files, function (file, callback) {
       var filePath = file.replace(modPath + path.sep, '');
 
+      if (process.platform === 'win32') {
+        // Change Windows backslashes in path to match PWS format
+        filePath = filePath.replace('\\', '/');
+      }
+
       if (filePath in data.files) {
         callback(null);
       } else {
