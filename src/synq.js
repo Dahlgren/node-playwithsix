@@ -107,11 +107,25 @@ function storePackageMetadata(destination, mod, data, cb) {
 
 function download(mirror, destination, mod, version, cb) {
   api.package(mod, version, function (err, data) {
-    downloadFiles(mirror, destination, data, function (err, objects) {
-      cleanupFiles(destination, data, function (err) {
-        storePackageMetadata(destination, mod, data, cb);
+    if (err) {
+      cb(err);
+    } else if (data) {
+      downloadFiles(mirror, destination, data, function (err, objects) {
+        if (err) {
+          cb(err);
+        } else {
+          cleanupFiles(destination, data, function (err) {
+            if (err) {
+              cb(err);
+            } else {
+              storePackageMetadata(destination, mod, data, cb);
+            }
+          });
+        }
       });
-    });
+    } else {
+      cb(new Error('Unable to fetch metadata for ' + mod + ', please try again'));
+    }
   });
 }
 
