@@ -1,11 +1,12 @@
 "use strict";
 var async = require('async');
+var events = require('events');
 
 var api = require('./api');
 var constants = require('./constants');
 var dependencies = require('./dependencies');
 var outdated = require('./outdated');
-var synq = require('./synq');
+var Synq = require('./synq');
 
 function downloadPWSData(cb) {
   async.parallel({
@@ -69,11 +70,12 @@ function checkOutdated(directory, cb) {
 }
 
 function downloadMod(destination, mod, cb) {
-  downloadMods(destination, [mod], cb);
+  return downloadMods(destination, [mod], cb);
 }
 
 function downloadMods(destination, modsToDownload, cb) {
   destination = destination + "/";
+  var eventEmitter = new events.EventEmitter();
 
   downloadPWSData(function (err, mirrors, mods, packages) {
     if (mirrors === null || mods === null || packages === null || err) {
@@ -93,12 +95,16 @@ function downloadMods(destination, modsToDownload, cb) {
 
         var toDownload = dependencies.resolveDependenciesForMods(mods, modsToDownload);
 
-        async.map(toDownload, function (mod, callback) {
+        async.mapLimit(toDownload, 1, function (mod, callback) {
           var modVersions = packages[mod];
 
           if (modVersions) {
             var version = modVersions[modVersions.length - 1];
-            synq.download(mirror, destination, mod, version, function(err) {
+            var synq = new Synq(mirror, destination, mod, version);
+            synq.on('progress', function (progress) {
+              eventEmitter.emit('progress', progress);
+            });
+            synq.download(function(err) {
               if (err) {
                 callback(err, null);
               } else {
@@ -112,6 +118,8 @@ function downloadMods(destination, modsToDownload, cb) {
       }
     }
   });
+
+  return eventEmitter;
 }
 
 module.exports = {

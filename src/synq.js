@@ -1,5 +1,6 @@
 var async = require('async');
 var crypto = require('crypto');
+var events = require('events');
 var fs = require('fs.extra');
 var path = require('path');
 var os = require('os');
@@ -9,27 +10,52 @@ var zlib = require('zlib');
 
 var api = require('./api');
 
-function hashToPath(hash) {
+var Synq = function (mirror, destination, mod, version) {
+  this.mirror = mirror;
+  this.destination = destination;
+  this.mod = mod;
+  this.version = version;
+  this.size = 0;
+  this.completed = 0;
+};
+
+Synq.prototype.__proto__ = events.EventEmitter.prototype;
+
+Synq.hashToPath = function (hash) {
   return hash.substring(0, 2) + '/' + hash.substring(2);
 }
 
-function downloadFiles(mirror, destination, data, cb) {
-  async.mapLimit(Object.keys(data.files), os.cpus().length, function (file, callback) {
-    var hash = data.files[file];
-    var filePath = path.join(destination, data.name, file);
+Synq.prototype.emitProgress = function () {
+  this.emit('progress', {
+    completed: this.completed,
+    mod: this.mod,
+    size: this.size,
+  })
+};
 
-    calculateFileHash(filePath, function(err, fileHash) {
+Synq.prototype.downloadFiles = function (cb) {
+  var self = this;
+  async.mapLimit(Object.keys(self.data.files), os.cpus().length, function (file, callback) {
+    var hash = self.data.files[file];
+    var filePath = path.join(self.destination, self.data.name, file);
+
+    self.calculateFileHash(filePath, function(err, fileHash) {
       if (err || hash !== fileHash) {
-        downloadFile(mirror, filePath, hash, callback);
+        self.downloadFile(filePath, hash, callback);
       } else {
-        callback(null, hash);
+        fs.stat(filePath, function (err, stats) {
+          self.completed += stats.size;
+          self.emitProgress();
+          callback(null, hash);
+        });
       }
     });
   }, cb);
 }
 
-function downloadFile(mirror, filePath, hash, cb) {
+Synq.prototype.downloadFile = function (filePath, hash, cb) {
   var folderPath = path.dirname(filePath);
+  var self = this;
 
   fs.mkdirp(folderPath, function (err) {
     if (err) {
@@ -37,23 +63,30 @@ function downloadFile(mirror, filePath, hash, cb) {
     } else {
       var out = fs.createWriteStream(filePath);
       out.on('finish', function () {
+        self.emitProgress();
         cb(null, hash);
       });
       out.on('error', function (err) {
         cb(err, null);
       });
 
-      request({url: mirror + '/objects/' + hashToPath(hash)})
+      var unzip = zlib.createGunzip();
+      unzip.on('data', function(chunk) {
+        self.completed += chunk.length;
+        self.emitProgress();
+      });
+
+      request({url: self.mirror + '/objects/' + Synq.hashToPath(hash)})
         .on('error', function (err) {
           cb(err, null);
         })
-        .pipe(zlib.createGunzip())
+        .pipe(unzip)
         .pipe(out);
     }
   });
 }
 
-function calculateFileHash(filePath, cb) {
+Synq.prototype.calculateFileHash = function (filePath, cb) {
   var hash = crypto.createHash('sha1');
   var stream = fs.createReadStream(filePath);
 
@@ -70,8 +103,10 @@ function calculateFileHash(filePath, cb) {
   });
 }
 
-function cleanupFiles(destination, data, cb) {
-  modPath = path.join(destination, data.name);
+Synq.prototype.cleanupFiles = function (cb) {
+  var self = this;
+  var modPath = path.join(this.destination, this.data.name);
+
   recursiveReaddir(modPath, function (err, files) {
     async.each(files, function (file, callback) {
       var filePath = file.replace(modPath + path.sep, '');
@@ -81,7 +116,7 @@ function cleanupFiles(destination, data, cb) {
         filePath = filePath.replace('\\', '/');
       }
 
-      if (filePath in data.files) {
+      if (filePath in self.data.files) {
         callback(null);
       } else {
         fs.unlink(file, function (err) {
@@ -92,33 +127,38 @@ function cleanupFiles(destination, data, cb) {
   });
 }
 
-function storePackageMetadata(destination, mod, data, cb) {
-  var filePath = path.join(destination, mod, '.synq.json');
+Synq.prototype.storePackageMetadata = function (cb) {
+  var filePath = path.join(this.destination, this.mod, '.synq.json');
   var folderPath = path.dirname(filePath);
+  var dataStr = JSON.stringify(this.data);
 
   fs.mkdirp(folderPath, function (err) {
     if (err) {
       cb(err, null);
     } else {
-      fs.writeFile(filePath, JSON.stringify(data), cb);
+      fs.writeFile(filePath, dataStr, cb);
     }
   });
 }
 
-function download(mirror, destination, mod, version, cb) {
-  api.package(mod, version, function (err, data) {
+Synq.prototype.download = function (cb) {
+  var self = this;
+  api.package(self.mod, self.version, function (err, data) {
     if (err) {
       cb(err);
     } else if (data) {
-      downloadFiles(mirror, destination, data, function (err, objects) {
+      self.data = data;
+      self.size = data.size;
+      self.emitProgress();
+      self.downloadFiles(function (err, objects) {
         if (err) {
           cb(err);
         } else {
-          cleanupFiles(destination, data, function (err) {
+          self.cleanupFiles(function (err) {
             if (err) {
               cb(err);
             } else {
-              storePackageMetadata(destination, mod, data, cb);
+              self.storePackageMetadata(cb);
             }
           });
         }
@@ -129,7 +169,4 @@ function download(mirror, destination, mod, version, cb) {
   });
 }
 
-module.exports = {
-  download: download,
-  hashToPath: hashToPath,
-};
+module.exports = Synq;
