@@ -21,6 +21,11 @@ var Synq = function (mirror, destination, mod, version) {
 
 Synq.prototype.__proto__ = events.EventEmitter.prototype;
 
+Synq.convertWindowsFilePath = function (filePath) {
+  // Change Windows backslashes in path to match PWS format
+  return filePath.replace(/\\/g, '/');
+}
+
 Synq.hashToPath = function (hash) {
   return hash.substring(0, 2) + '/' + hash.substring(2);
 }
@@ -112,8 +117,7 @@ Synq.prototype.cleanupFiles = function (cb) {
       var filePath = file.replace(modPath + path.sep, '');
 
       if (process.platform === 'win32') {
-        // Change Windows backslashes in path to match PWS format
-        filePath = filePath.replace('\\', '/');
+        filePath = Synq.convertWindowsFilePath(filePath);
       }
 
       if (filePath in self.data.files) {
