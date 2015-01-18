@@ -48,7 +48,7 @@ function fetchMods(cb) {
 }
 
 function resolveDependencies(modsToResolve, cb) {
-  downloadPWSData(function (err, mirrors, mods, packages) {
+  fetchMods(function (err, mods) {
     if (mods === null || err) {
       cb(err, null);
     } else {
