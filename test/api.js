@@ -42,7 +42,7 @@ describe('api', function(){
 
   describe('mirrors', function(){
     it('should return mirrors', function(done){
-      api.families(function (err, mirrors) {
+      api.mirrors(function (err, mirrors) {
         if (err) return done(err);
         mirrors.should.not.be.empty;
         done();
@@ -52,7 +52,7 @@ describe('api', function(){
 
   describe('modSets', function(){
     it('should return modSets', function(done){
-      api.families(function (err, modSets) {
+      api.modSets(function (err, modSets) {
         if (err) return done(err);
         modSets.should.not.be.empty;
         done();
@@ -62,7 +62,7 @@ describe('api', function(){
 
   describe('mods', function(){
     it('should return mods', function(done){
-      api.families(function (err, mods) {
+      api.mods(function (err, mods) {
         if (err) return done(err);
         mods.should.not.be.empty;
         done();
@@ -72,7 +72,7 @@ describe('api', function(){
 
   describe('networks', function(){
     it('should return networks', function(done){
-      api.families(function (err, networks) {
+      api.networks(function (err, networks) {
         if (err) return done(err);
         networks.should.not.be.empty;
         done();
