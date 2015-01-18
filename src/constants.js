@@ -1,6 +1,6 @@
 module.exports = {
   api: {
-    rootUrl: 'http://api-cdn.withsix.com/api/v1',
+    rootUrl: 'http://api-cdn.withsix.com/api/v2',
   },
   synq: {
     arma3: {

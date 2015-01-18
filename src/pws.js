@@ -32,7 +32,14 @@ function fetchMods(cb) {
       cb(err, null);
     } else {
       result.forEach(function (mod) {
-        mods[mod.name.toLowerCase()] = mod;
+        mods[mod.PackageName.toLowerCase()] = {
+          author: mod.Author,
+          dependencies: mod.Dependencies.map(function (mod) {
+            return mod.toLowerCase();
+          }),
+          name: mod.PackageName,
+          title: mod.Name,
+        };
       });
 
       cb(null, mods);
