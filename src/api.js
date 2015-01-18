@@ -4,12 +4,10 @@ var request = require('request');
 var constants = require('./constants');
 
 function getData(url, cb) {
-  request(url, function (err, response, body) {
+  request({url: url, json: true}, function (err, response, body) {
     if (!err && response.statusCode == 200) {
-      var json = JSON.parse(body);
-
       if (cb) {
-        cb(null, json);
+        cb(null, body);
       }
     } else {
       if (cb) {
