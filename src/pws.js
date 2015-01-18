@@ -112,7 +112,7 @@ function downloadMods(destination, modsToDownload, cb) {
               }
             });
           } else {
-            callback(new Error("Mod not found in packages", null));
+            callback(new Error('Mod ' + mod + 'not found in packages', null));
           }
         }, cb);
       }
