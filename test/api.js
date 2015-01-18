@@ -2,6 +2,8 @@ var should = require('should');
 var api = require('../src/api');
 
 describe('api', function(){
+  this.timeout(5000);
+
   describe('categories', function(){
     it('should return categories', function(done){
       api.categories(function (err, categories) {
