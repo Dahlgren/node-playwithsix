@@ -3,20 +3,43 @@ var async = require('async');
 var fs = require('fs');
 var path = require('path');
 
-function checkMod(mod, modPath, latestVersion, cb) {
+function checkSynqinfo(mod, modPath, latestVersion, cb) {
+  var synqFile = path.join(modPath, '.synqinfo');
+  fs.readFile(synqFile, 'utf8', function (err, content) {
+    if (err) {
+      cb(false, false);
+    } else {
+      cb(true, content != mod + "-" + latestVersion);
+    }
+  });
+}
+
+function checkSynqMetadata(mod, modPath, latestVersion, cb) {
   var synqFile = path.join(modPath, '.synq.json');
   fs.readFile(synqFile, 'utf8', function (err, content) {
     if (err) {
-      cb(false);
+      cb(false, false);
     } else {
       var data = JSON.parse(content);
       if (data && data.version) {
-        cb(data.version != latestVersion);
+        cb(true, data.version != latestVersion);
       } else {
-        cb(false);
+        cb(false, false);
       }
     }
   });
+}
+
+function checkMod(mod, modPath, latestVersion, cb) {
+  checkSynqinfo(mod, modPath, latestVersion, function (exists, outdated) {
+    if (exists) {
+      cb(outdated);
+    } else {
+      checkSynqMetadata(mod, modPath, latestVersion, function (exists, outdated) {
+        cb(exists && outdated);
+      });
+    }
+  })
 }
 
 function checkMods(directory, mods, packages, cb) {
