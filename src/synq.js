@@ -132,15 +132,21 @@ Synq.prototype.cleanupFiles = function (cb) {
 }
 
 Synq.prototype.storePackageMetadata = function (cb) {
-  var filePath = path.join(this.destination, this.mod, '.synq.json');
-  var folderPath = path.dirname(filePath);
+  var modPath = path.join(this.destination, this.mod);
   var dataStr = JSON.stringify(this.data);
+  var versionStr = this.mod + "-" + this.version;
 
-  fs.mkdirp(folderPath, function (err) {
+  fs.mkdirp(modPath, function (err) {
     if (err) {
       cb(err, null);
     } else {
-      fs.writeFile(filePath, dataStr, cb);
+      fs.writeFile(path.join(modPath, '.synq.json'), dataStr, function (err) {
+        if (err) {
+          cb(err, null);
+        } else {
+          fs.writeFile(path.join(modPath, '.synqinfo'), versionStr, cb);
+        }
+      });
     }
   });
 }
