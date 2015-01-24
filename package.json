@@ -13,7 +13,11 @@
     "url": "http://dahlgren.at/"
   },
   "bin": {
-    "playwithsix": "./bin/playwithsix"
+    "playwithsix": "./bin/playwithsix",
+    "playwithsix-dependencies": "./bin/playwithsix-dependencies",
+    "playwithsix-install": "./bin/playwithsix-install",
+    "playwithsix-outdated": "./bin/playwithsix-outdated",
+    "playwithsix-update": "./bin/playwithsix-update"
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha"
