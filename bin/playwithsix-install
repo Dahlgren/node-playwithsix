@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-var ProgressBar = require('progress');
+var ProgressBar = require('./progressbar');
 
 var pws = require('../src/pws');
 
@@ -20,8 +20,7 @@ if (!program.path) {
   program.path = process.cwd();
 }
 
-var currentMod = null;
-var progressBar = null;
+var progressBar = new ProgressBar();
 
 pws.downloadMods(program.path, mods, function(err, mods) {
   if (err) {
@@ -29,19 +28,5 @@ pws.downloadMods(program.path, mods, function(err, mods) {
     process.exit(1);
   }
 }).on('progress', function (progress) {
-  if (progress.mod !== currentMod) {
-    currentMod = progress.mod;
-    if (progressBar !== null) {
-      progressBar.terminate();
-    }
-
-    progressBar = new ProgressBar(' ' + progress.mod + ' [:bar] :percent', {
-        clear: false
-      , complete: '='
-      , incomplete: ' '
-      , width: 40
-      , total: progress.size
-    });
-  }
-  progressBar.update(progress.completed / progress.size);
+  progressBar.update(progress);
 });
