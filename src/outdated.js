@@ -39,7 +39,7 @@ function checkMod(mod, modPath, latestVersion, cb) {
         cb(exists && outdated);
       });
     }
-  })
+  });
 }
 
 function checkMods(directory, mods, packages, cb) {

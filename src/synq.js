@@ -1,11 +1,12 @@
 var async = require('async');
 var crypto = require('crypto');
-var events = require('events');
+var EventEmitter = require('events').EventEmitter;
 var fs = require('fs.extra');
 var path = require('path');
 var os = require('os');
 var recursiveReaddir = require('recursive-readdir');
 var request = require('request');
+var util = require('util');
 var zlib = require('zlib');
 
 var api = require('./api');
@@ -19,23 +20,23 @@ var Synq = function (mirror, destination, mod, version) {
   this.completed = 0;
 };
 
-Synq.prototype.__proto__ = events.EventEmitter.prototype;
+util.inherits(Synq, EventEmitter);
 
 Synq.convertWindowsFilePath = function (filePath) {
   // Change Windows backslashes in path to match PWS format
   return filePath.replace(/\\/g, '/');
-}
+};
 
 Synq.hashToPath = function (hash) {
   return hash.substring(0, 2) + '/' + hash.substring(2);
-}
+};
 
 Synq.prototype.emitProgress = function () {
   this.emit('progress', {
     completed: this.completed,
     mod: this.mod,
     size: this.size,
-  })
+  });
 };
 
 Synq.prototype.downloadFiles = function (cb) {
@@ -56,7 +57,7 @@ Synq.prototype.downloadFiles = function (cb) {
       }
     });
   }, cb);
-}
+};
 
 Synq.prototype.downloadFile = function (filePath, hash, cb) {
   var folderPath = path.dirname(filePath);
@@ -89,7 +90,7 @@ Synq.prototype.downloadFile = function (filePath, hash, cb) {
         .pipe(out);
     }
   });
-}
+};
 
 Synq.prototype.calculateFileHash = function (filePath, cb) {
   var hash = crypto.createHash('sha1');
@@ -106,7 +107,7 @@ Synq.prototype.calculateFileHash = function (filePath, cb) {
   stream.on('error', function (err) {
     cb(err, null);
   });
-}
+};
 
 Synq.prototype.cleanupFiles = function (cb) {
   var self = this;
@@ -129,7 +130,7 @@ Synq.prototype.cleanupFiles = function (cb) {
       }
     }, cb);
   });
-}
+};
 
 Synq.prototype.storePackageMetadata = function (cb) {
   var modPath = path.join(this.destination, this.mod);
@@ -149,7 +150,7 @@ Synq.prototype.storePackageMetadata = function (cb) {
       });
     }
   });
-}
+};
 
 Synq.prototype.download = function (cb) {
   var self = this;
@@ -177,6 +178,6 @@ Synq.prototype.download = function (cb) {
       cb(new Error('Unable to fetch metadata for ' + mod + ', please try again'));
     }
   });
-}
+};
 
 module.exports = Synq;
