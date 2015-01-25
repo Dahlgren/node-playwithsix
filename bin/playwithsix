@@ -6,6 +6,7 @@ program
   .command('install <mods>', 'download one or more mods')
   .command('dependencies <mods>', 'list dependencies for mods')
   .command('outdated', 'list outdated mods')
+  .command('search', 'search mods')
   .command('update', 'update outdated mods')
   .parse(process.argv);
 

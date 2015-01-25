@@ -6,6 +6,7 @@ var api = require('./api');
 var constants = require('./constants');
 var dependencies = require('./dependencies');
 var outdated = require('./outdated');
+var search = require('./search');
 var Synq = require('./synq');
 
 function downloadPWSData(cb) {
@@ -38,6 +39,7 @@ function fetchMods(cb) {
             return mod.toLowerCase();
           }),
           name: mod.PackageName,
+          size: mod.Size,
           title: mod.Name,
         };
       });
@@ -129,10 +131,17 @@ function downloadMods(destination, modsToDownload, cb) {
   return eventEmitter;
 }
 
+function searchPWS(phrase, cb) {
+  api.mods(function (err, mods) {
+    search(phrase, mods, cb);
+  });
+}
+
 module.exports = {
   checkOutdated: checkOutdated,
   downloadMod: downloadMod,
   downloadMods: downloadMods,
   fetchMods: fetchMods,
   resolveDependencies: resolveDependencies,
+  search: searchPWS,
 };
