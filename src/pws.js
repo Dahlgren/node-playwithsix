@@ -49,7 +49,8 @@ function fetchMods(cb) {
   });
 }
 
-function resolveDependencies(modsToResolve, cb) {
+function resolveDependencies(modsToResolve, options, cb) {
+  options = options || {};
   fetchMods(function (err, mods) {
     if (mods === null || err) {
       cb(err, null);
@@ -58,7 +59,7 @@ function resolveDependencies(modsToResolve, cb) {
         return mod in mods;
       });
 
-      cb(null, dependencies.resolveDependenciesForMods(mods, modsToResolve));
+      cb(null, dependencies.resolveDependenciesForMods(mods, modsToResolve, options));
     }
   });
 }
@@ -78,11 +79,12 @@ function checkOutdated(directory, cb) {
   });
 }
 
-function downloadMod(destination, mod, cb) {
-  return downloadMods(destination, [mod], cb);
+function downloadMod(destination, mod, options, cb) {
+  return downloadMods(destination, [mod], options, cb);
 }
 
-function downloadMods(destination, modsToDownload, cb) {
+function downloadMods(destination, modsToDownload, options, cb) {
+  options = options || {};
   destination = destination + "/";
   var eventEmitter = new events.EventEmitter();
 
@@ -102,7 +104,7 @@ function downloadMods(destination, modsToDownload, cb) {
       } else {
         var mirror = selectMirror(mirrors);
 
-        var toDownload = dependencies.resolveDependenciesForMods(mods, modsToDownload);
+        var toDownload = dependencies.resolveDependenciesForMods(mods, modsToDownload, options);
 
         async.mapLimit(toDownload, 1, function (mod, callback) {
           var modVersions = packages[mod];

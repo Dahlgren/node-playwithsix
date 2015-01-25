@@ -67,21 +67,29 @@ Use `-p` or `--path` to specify a directory other than current working directory
 
 Find outdated mods which have previously been downloaded from Play withSIX
 
-### downloadMod(destination, mod, callback(err, mods))
-### downloadMods(destination, mods, callback(err, mods))
+### downloadMod(destination, mod, options, callback(err, mods))
+### downloadMods(destination, mods, options, callback(err, mods))
 
 Path where a mod or mods will be downloaded to.
 Leftover files per mod directory will be deleted to ensure only current files are present.
 
 Result will contain list of downloaded mods
 
+#### Options
+
+* lite [bool], Try to use lite version of mods
+
 ### fetchMods(callback(err, mods))
 
 Get all metadata about mods available from Play withSIX
 
-### resolveDependencies(mods, callback(err, mods))
+### resolveDependencies(mods, options, callback(err, mods))
 
 Calculate needed mods from Play withSIX for inputed list of mods
+
+#### Options
+
+* lite [bool], Try to use lite version of mods
 
 ### search(phrase, callback(err, mods))
 

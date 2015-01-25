@@ -6,6 +6,7 @@ var ProgressBar = require('./progressbar');
 var pws = require('../src/pws');
 
 program
+  .option('--lite', 'use lite versions of mods where available')
   .option('-p, --path [value]', 'path to directory if other than cwd')
   .parse(process.argv);
 
@@ -20,7 +21,7 @@ pws.checkOutdated(program.path, function(err, mods) {
   } else {
     var progressBar = new ProgressBar();
 
-    pws.downloadMods(program.path, mods, function(err, mods) {
+    pws.downloadMods(program.path, mods, {lite: program.lite === true}, function(err, mods) {
       if (err) {
         console.error(err);
         process.exit(1);

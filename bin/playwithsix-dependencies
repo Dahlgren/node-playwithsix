@@ -5,6 +5,7 @@ var program = require('commander');
 var pws = require('../src/pws');
 
 program
+  .option('--lite', 'use lite versions of mods where available')
   .parse(process.argv);
 
 var mods = program.args;
@@ -14,7 +15,7 @@ if (!mods.length) {
   process.exit(1);
 }
 
-pws.resolveDependencies(mods, function(err, mods) {
+pws.resolveDependencies(mods, {lite: program.lite === true}, function(err, mods) {
   if (err) {
     console.error(err);
     process.exit(1);

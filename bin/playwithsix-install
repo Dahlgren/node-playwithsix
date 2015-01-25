@@ -6,6 +6,7 @@ var ProgressBar = require('./progressbar');
 var pws = require('../src/pws');
 
 program
+  .option('--lite', 'use lite versions of mods where available')
   .option('-p, --path [value]', 'path to directory if other than cwd')
   .parse(process.argv);
 
