@@ -133,7 +133,11 @@ function downloadMods(destination, modsToDownload, cb) {
 
 function searchPWS(phrase, cb) {
   api.mods(function (err, mods) {
-    search(phrase, mods, cb);
+    if (err) {
+      cb(err);
+    } else {
+      search(phrase, mods, cb);
+    }
   });
 }
 
