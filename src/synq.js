@@ -175,7 +175,7 @@ Synq.prototype.download = function (cb) {
         }
       });
     } else {
-      cb(new Error('Unable to fetch metadata for ' + mod + ', please try again'));
+      cb(new Error('Unable to fetch metadata for ' + self.mod + ', please try again'));
     }
   });
 };
