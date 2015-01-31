@@ -72,20 +72,17 @@ Synq.prototype.downloadFile = function (filePath, hash, cb) {
         self.emitProgress();
         cb(null, hash);
       });
-      out.on('error', function (err) {
-        cb(err, null);
-      });
+      out.on('error', cb);
 
       var unzip = zlib.createGunzip();
       unzip.on('data', function(chunk) {
         self.completed += chunk.length;
         self.emitProgress();
       });
+      unzip.on('error', cb);
 
       request({url: self.mirror + '/objects/' + Synq.hashToPath(hash)})
-        .on('error', function (err) {
-          cb(err, null);
-        })
+        .on('error', cb)
         .pipe(unzip)
         .pipe(out);
     }
@@ -95,18 +92,13 @@ Synq.prototype.downloadFile = function (filePath, hash, cb) {
 Synq.prototype.calculateFileHash = function (filePath, cb) {
   var hash = crypto.createHash('sha1');
   var stream = fs.createReadStream(filePath);
-
   stream.on('data', function (data) {
     hash.update(data, 'utf8');
   });
-
   stream.on('end', function () {
     cb(null, hash.digest('hex'));
   });
-
-  stream.on('error', function (err) {
-    cb(err, null);
-  });
+  stream.on('error', cb);
 };
 
 Synq.prototype.cleanupFiles = function (cb) {
@@ -124,9 +116,7 @@ Synq.prototype.cleanupFiles = function (cb) {
       if (filePath in self.data.files) {
         callback(null);
       } else {
-        fs.unlink(file, function (err) {
-          callback(err);
-        });
+        fs.unlink(file, callback);
       }
     }, cb);
   });
@@ -137,47 +127,43 @@ Synq.prototype.storePackageMetadata = function (cb) {
   var dataStr = JSON.stringify(this.data);
   var versionStr = this.mod + "-" + this.version;
 
-  fs.mkdirp(modPath, function (err) {
-    if (err) {
-      cb(err, null);
-    } else {
-      fs.writeFile(path.join(modPath, '.synq.json'), dataStr, function (err) {
-        if (err) {
-          cb(err, null);
-        } else {
-          fs.writeFile(path.join(modPath, '.synqinfo'), versionStr, cb);
-        }
-      });
+  async.series([
+    function(callback){
+      fs.writeFile(path.join(modPath, '.synq.json'), dataStr, callback);
+    },
+    function(callback){
+      fs.writeFile(path.join(modPath, '.synqinfo'), versionStr, callback);
     }
-  });
+  ], cb);
 };
 
 Synq.prototype.download = function (cb) {
   var self = this;
-  api.package(self.mod, self.version, function (err, data) {
-    if (err) {
-      cb(err);
-    } else if (data) {
-      self.data = data;
-      self.size = data.size;
-      self.emitProgress();
-      self.downloadFiles(function (err, objects) {
+  async.series([
+    function(callback){
+      api.package(self.mod, self.version, function (err, data) {
         if (err) {
-          cb(err);
+          callback(err);
+        } else if (data) {
+          self.data = data;
+          self.size = data.size;
+          self.emitProgress();
+          callback();
         } else {
-          self.cleanupFiles(function (err) {
-            if (err) {
-              cb(err);
-            } else {
-              self.storePackageMetadata(cb);
-            }
-          });
+          callback(new Error('Unable to fetch metadata for ' + self.mod + ', please try again'));
         }
       });
-    } else {
-      cb(new Error('Unable to fetch metadata for ' + self.mod + ', please try again'));
-    }
-  });
+    },
+    function(callback){
+      self.downloadFiles(callback);
+    },
+    function(callback){
+      self.cleanupFiles(callback);
+    },
+    function(callback){
+      self.storePackageMetadata(callback);
+    },
+  ], cb);
 };
 
 module.exports = Synq;
