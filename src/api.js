@@ -18,14 +18,14 @@ function getData(url, cb) {
 }
 
 module.exports = {
-  bundles: function(cb) {
-    getData(constants.synq.rootUrl + '/' + constants.synq.arma3.mods + '/bundles.json', cb);
+  bundles: function(mirror, cb) {
+    getData(mirror + '/synq/' + constants.synq.arma3.mods + '/bundles.json', cb);
   },
   categories: function(cb) {
     getData(constants.api.rootUrl + '/categories.json', cb);
   },
-  config: function(cb) {
-    getData(constants.synq.rootUrl + '/' + constants.synq.arma3.mods + '/config.json', cb);
+  config: function(mirror, cb) {
+    getData(mirror + '/synq/' + constants.synq.arma3.mods + '/config.json', cb);
   },
   families: function(cb) {
     getData(constants.api.rootUrl + '/families.json', cb);
@@ -42,10 +42,24 @@ module.exports = {
   networks: function(cb) {
     getData(constants.api.rootUrl + '/networks.json', cb);
   },
-  packages: function(cb) {
-    getData(constants.synq.rootUrl + '/' + constants.synq.arma3.mods + '/packages.json', cb);
+  packages: function(mirror, cb) {
+    getData(mirror + '/synq/' + constants.synq.arma3.mods + '/packages.json', cb);
   },
-  package: function(mod, version, cb) {
-    getData(constants.synq.rootUrl + '/' + constants.synq.arma3.mods + '/packages/'+ mod + '-' + version + '.json', cb);
+  package: function(mirror, mod, version, cb) {
+    getData(mirror + '/synq/' + constants.synq.arma3.mods + '/packages/'+ mod + '-' + version + '.json', cb);
+  },
+  selectMirror: function(mirrors) {
+    var validMirrorsRegExp = /http:\/\/[a-z|0-9]+-[a-z|0-9]+.sixmirror.com/g;
+    mirrors = mirrors.map(function (mirror) {
+      return mirror.url;
+    }).filter(function (mirror) {
+      return validMirrorsRegExp.test(mirror.toLowerCase());
+    });
+
+    if (mirrors.length > 0) {
+      return mirrors[Math.floor(Math.random()*mirrors.length)];
+    }
+
+    return null;
   },
 };

@@ -11,14 +11,28 @@ var Synq = require('./synq');
 
 function downloadPWSData(cb) {
   async.parallel({
-    config: api.config,
+    mirrors: api.mirrors,
     mods: fetchMods,
-    packages: api.packages,
   }, function (err, results) {
     if (err) {
       cb(err);
-    } else if (results.config && results.mods && results.packages) {
-      cb(null, results.config.remotes[constants.synq.arma3.mods], results.mods, results.packages.packages);
+    } else if (results.mirrors && results.mods) {
+      var mirror = api.selectMirror(results.mirrors);
+
+      if (mirror) {
+        var mods = results.mods;
+        api.packages(mirror, function (err, packages) {
+          if (err) {
+            cb(err);
+          } else if (packages) {
+            cb(null, mirror, mods, packages.packages);
+          } else {
+            cb(new Error("Unable to fetch metadata, please try again"));
+          }
+        });
+      } else {
+        cb(new Error("No working mirror could be found"));
+      }
     } else {
       cb(new Error("Unable to fetch metadata, please try again"));
     }
@@ -64,11 +78,6 @@ function resolveDependencies(modsToResolve, options, cb) {
   });
 }
 
-function selectMirror(mirrors) {
-  var mirror = mirrors[Math.floor(Math.random()*mirrors.length)];
-  return mirror.replace('rsync://', 'http://').replace('zsync://', 'http://');
-}
-
 function checkOutdated(directory, cb) {
   downloadPWSData(function (err, mirrors, mods, packages) {
     if (mods === null || packages === null || err) {
@@ -88,8 +97,8 @@ function downloadMods(destination, modsToDownload, options, cb) {
   destination = destination + "/";
   var eventEmitter = new events.EventEmitter();
 
-  downloadPWSData(function (err, mirrors, mods, packages) {
-    if (mirrors === null || mods === null || packages === null || err) {
+  downloadPWSData(function (err, mirror, mods, packages) {
+    if (mirror === null || mods === null || packages === null || err) {
       cb(err, null);
     } else {
       var modsNotFound = [];
@@ -102,8 +111,6 @@ function downloadMods(destination, modsToDownload, options, cb) {
       if (modsNotFound.length > 0) {
         cb(new Error(modsNotFound.join(', ') + ' not found on Six Updater'), null);
       } else {
-        var mirror = selectMirror(mirrors);
-
         var toDownload = dependencies.resolveDependenciesForMods(mods, modsToDownload, options);
 
         async.mapLimit(toDownload, 1, function (mod, callback) {

@@ -11,6 +11,7 @@ var util = require('util');
 var zlib = require('zlib');
 
 var api = require('./api');
+var constants = require('./constants');
 
 var Synq = function (mirror, destination, mod, version) {
   this.mirror = mirror;
@@ -82,7 +83,7 @@ Synq.prototype.downloadFile = function (filePath, hash, cb) {
       });
       unzip.on('error', cb);
 
-      request({url: self.mirror + '/objects/' + Synq.hashToPath(hash)})
+      request({url: self.mirror + '/synq/' + constants.synq.arma3.mods + '/objects/' + Synq.hashToPath(hash)})
         .on('error', cb)
         .pipe(unzip)
         .pipe(out);
@@ -182,7 +183,7 @@ Synq.prototype.download = function (cb) {
   var self = this;
   async.series([
     function(callback){
-      api.package(self.mod, self.version, function (err, data) {
+      api.package(self.mirror, self.mod, self.version, function (err, data) {
         if (err) {
           callback(err);
         } else if (data) {
