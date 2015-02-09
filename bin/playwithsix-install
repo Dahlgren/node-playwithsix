@@ -23,7 +23,7 @@ if (!program.path) {
 
 var progressBar = new ProgressBar();
 
-pws.downloadMods(program.path, mods, function(err, mods) {
+pws.downloadMods(program.path, mods, {lite: program.lite === true}, function(err, mods) {
   if (err) {
     console.error(err);
     process.exit(1);
