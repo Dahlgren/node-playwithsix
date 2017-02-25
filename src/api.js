@@ -4,7 +4,7 @@ var request = require('request');
 var constants = require('./constants');
 
 function getData(url, cb) {
-  request({url: url, json: true}, function (err, response, body) {
+  request({url: url, json: true, gzip: true}, function (err, response, body) {
     if (!err && response.statusCode == 200) {
       if (cb) {
         cb(null, body);
@@ -22,25 +22,25 @@ module.exports = {
     getData(mirror + '/synq/' + constants.synq.arma3.mods + '/bundles.json', cb);
   },
   categories: function(cb) {
-    getData(constants.api.rootUrl + '/categories.json', cb);
+    getData(constants.api.rootUrl + '/categories.json.gz', cb);
   },
   config: function(mirror, cb) {
     getData(mirror + '/synq/' + constants.synq.arma3.mods + '/config.json', cb);
   },
   families: function(cb) {
-    getData(constants.api.rootUrl + '/families.json', cb);
+    getData(constants.api.rootUrl + '/families.json.gz', cb);
   },
   mirrors: function(cb) {
-    getData(constants.api.rootUrl + '/mirrors.json', cb);
+    getData(constants.api.rootUrl + '/mirrors.json.gz', cb);
   },
   modSets: function(cb) {
-    getData(constants.api.rootUrl + '/mod_sets.json', cb);
+    getData(constants.api.rootUrl + '/mod_sets.json.gz', cb);
   },
   mods: function(cb) {
-    getData(constants.api.rootUrl + '/mods.json', cb);
+    getData(constants.api.rootUrl + '/mods.json.gz', cb);
   },
   networks: function(cb) {
-    getData(constants.api.rootUrl + '/networks.json', cb);
+    getData(constants.api.rootUrl + '/networks.json.gz', cb);
   },
   packages: function(mirror, cb) {
     getData(mirror + '/synq/' + constants.synq.arma3.mods + '/packages.json', cb);

@@ -25,17 +25,6 @@ describe('api', function(){
         });
       });
     });
-
-    it('should return remotes', function(done){
-      api.mirrors(function (err, mirrors) {
-        var mirror = api.selectMirror(mirrors);
-        api.config(mirror, function (err, config) {
-          if (err) return done(err);
-          config.remotes.should.not.be.empty;
-          done();
-        });
-      });
-    });
   });
 
   describe('families', function(){
