@@ -1,3 +1,5 @@
+var constants = require('../constants')
+
 module.exports = function (mod) {
   return {
     author: mod.Author,
@@ -6,6 +8,7 @@ module.exports = function (mod) {
       return dependency.toLowerCase()
     }),
     id: mod.Id,
+    image: constants.images.rootUrl + mod.ImagePath,
     latestStableVersion: mod.latestStableVersion,
     latestVersion: mod.Version,
     name: mod.PackageName.toLowerCase(),
