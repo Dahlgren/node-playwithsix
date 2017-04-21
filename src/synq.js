@@ -6,7 +6,6 @@ var path = require('path');
 var os = require('os');
 var recursiveReaddir = require('recursive-readdir');
 var request = require('request');
-var tarball = require('tarball-extract');
 var util = require('util');
 var zlib = require('zlib');
 
@@ -124,46 +123,6 @@ Synq.prototype.cleanupFiles = function (cb) {
   });
 };
 
-Synq.prototype.extractUserConfig = function (cb) {
-  var self = this;
-  async.series([
-    function(callback) {
-      var src = path.join(self.destination, self.data.name, 'store', 'userconfig.tar');
-      var dest = self.destination;
-      fs.exists(src, function(exists) {
-        if (exists) {
-          tarball.extractTarball(src, dest, callback);
-        } else {
-          callback();
-        }
-      });
-    },
-    function(callback) {
-      var src = path.join(self.destination, self.data.name, 'userconfig');
-      var dest = path.join(self.destination, 'userconfig', self.data.name.replace('@', ''));
-      fs.exists(src, function(exists) {
-        if (exists) {
-          async.series([
-            function(callback){
-              fs.rmrf(dest, callback);
-            },
-            function(callback){
-              fs.mkdirp(dest, callback);
-            },
-            function(callback){
-              fs.copyRecursive(src, dest, callback);
-            }
-          ], callback);
-        } else {
-          callback();
-        }
-      });
-    }
-  ], function(err) {
-    cb(err);
-  });
-};
-
 Synq.prototype.storePackageMetadata = function (cb) {
   var modPath = path.join(this.destination, this.mod);
   var dataStr = JSON.stringify(this.data);
@@ -201,9 +160,6 @@ Synq.prototype.download = function (cb) {
     },
     function(callback){
       self.cleanupFiles(callback);
-    },
-    function(callback){
-      self.extractUserConfig(callback);
     },
     function(callback){
       self.storePackageMetadata(callback);
