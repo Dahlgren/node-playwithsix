@@ -5,6 +5,7 @@ var events = require('events');
 var api = require('./api');
 var constants = require('./constants');
 var dependencies = require('./dependencies');
+var mapModInfo = require('./utils/map_mod_info');
 var outdated = require('./outdated');
 var search = require('./search');
 var Synq = require('./synq');
@@ -47,15 +48,7 @@ function fetchMods(cb) {
       cb(err, null);
     } else {
       result.forEach(function (mod) {
-        mods[mod.PackageName.toLowerCase()] = {
-          author: mod.Author,
-          dependencies: mod.Dependencies.map(function (mod) {
-            return mod.toLowerCase();
-          }),
-          name: mod.PackageName,
-          size: mod.Size,
-          title: mod.Name,
-        };
+        mods[mod.PackageName.toLowerCase()] = mapModInfo(mod);
       });
 
       cb(null, mods);
