@@ -33,10 +33,10 @@ function checkSynqMetadata(mod, modPath, latestVersion, cb) {
 function checkMod(mod, modPath, latestVersion, cb) {
   checkSynqinfo(mod, modPath, latestVersion, function (exists, outdated) {
     if (exists) {
-      cb(outdated);
+      cb(null, outdated);
     } else {
       checkSynqMetadata(mod, modPath, latestVersion, function (exists, outdated) {
-        cb(exists && outdated);
+        cb(null, exists && outdated);
       });
     }
   });
@@ -62,7 +62,7 @@ function checkMods(directory, mods, packages, cb) {
         } else {
           callback(null, false);
         }
-      }, function(outdatedMods){
+      }, function(err, outdatedMods){
         if (cb) {
           cb(err, outdatedMods);
         }
