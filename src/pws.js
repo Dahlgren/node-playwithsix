@@ -136,6 +136,10 @@ function searchPWS (phrase, cb) {
     if (err) {
       cb(err)
     } else {
+      if (!mods || !Array.isArray(mods) || mods.length === 0) {
+        cb(new Error('Unable to fetch metadata, please try again'))
+      }
+
       search(phrase, mods, cb)
     }
   })
