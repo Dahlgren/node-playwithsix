@@ -2,7 +2,7 @@ module.exports = function (mod) {
   return {
     author: mod.Author,
     dependencies: mod.Dependencies.map(function (dependency) {
-      return dependency.toLowerCase();
+      return dependency.toLowerCase()
     }),
     id: mod.Id,
     latestStableVersion: mod.latestStableVersion,
@@ -11,6 +11,6 @@ module.exports = function (mod) {
     size: mod.SizeWd,
     tags: mod.Tags,
     title: mod.Name,
-    type: mod.Type,
-  };
+    type: mod.Type
+  }
 }
