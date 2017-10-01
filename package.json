@@ -16,6 +16,7 @@
     "playwithsix": "./bin/playwithsix"
   },
   "scripts": {
+    "lint": "standard --verbose",
     "test": "./node_modules/mocha/bin/mocha"
   },
   "main": "./src/pws.js",
@@ -30,11 +31,17 @@
   },
   "devDependencies": {
     "mocha": "~3.2.0",
-    "should": "~11.2.1"
+    "should": "~11.2.1",
+    "standard": "^10.0.3"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "http://github.com/Dahlgren/node-playwithsix.git"
+  },
+  "standard": {
+    "env": [
+      "mocha"
+    ]
   }
 }
