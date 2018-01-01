@@ -1,39 +1,39 @@
 #!/usr/bin/env node
 
-var program = require('commander');
-var ProgressBar = require('./progressbar');
+var program = require('commander')
+var ProgressBar = require('./progressbar')
 
-var pws = require('../src/pws');
+var pws = require('../src/pws')
 
 program
   .option('--lite', 'use lite versions of mods where available')
   .option('--skip-dependencies', 'skip downloading of other dependencies')
   .option('-p, --path [value]', 'path to directory if other than cwd')
-  .parse(process.argv);
+  .parse(process.argv)
 
-var mods = program.args;
+var mods = program.args
 
 if (!mods.length) {
-  console.error("PlayWithSix installation requires at least one mod");
-  process.exit(1);
+  console.error('PlayWithSix installation requires at least one mod')
+  process.exit(1)
 }
 
 if (!program.path) {
-  program.path = process.cwd();
+  program.path = process.cwd()
 }
 
-var progressBar = new ProgressBar();
+var progressBar = new ProgressBar()
 
 var options = {
   lite: program.lite === true,
   skipDependencies: program.skipDependencies === true
 }
 
-pws.downloadMods(program.path, mods, options, function(err, mods) {
+pws.downloadMods(program.path, mods, options, function (err, mods) {
   if (err) {
-    console.error(err);
-    process.exit(1);
+    console.error(err)
+    process.exit(1)
   }
 }).on('progress', function (progress) {
-  progressBar.update(progress);
-});
+  progressBar.update(progress)
+})

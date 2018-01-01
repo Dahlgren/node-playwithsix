@@ -1,28 +1,28 @@
 #!/usr/bin/env node
 
-var filesize = require('filesize');
-var program = require('commander');
+var filesize = require('filesize')
+var program = require('commander')
 
-var pws = require('../src/pws');
+var pws = require('../src/pws')
 
 program
-  .parse(process.argv);
+  .parse(process.argv)
 
-pws.search(program.args.join(' '), function(err, mods) {
+pws.search(program.args.join(' '), function (err, mods) {
   if (err) {
-    console.error(err);
-    process.exit(1);
+    console.error(err)
+    process.exit(1)
   } else {
     mods.sort(function (a, b) {
-      return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-    });
+      return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+    })
     mods.forEach(function (mod) {
-      console.log(mod.name + " - " + mod.title);
+      console.log(mod.name + ' - ' + mod.title)
       if (mod.dependencies.length > 0) {
-        console.log("  Dependencies: " + mod.dependencies.join(", "));
+        console.log('  Dependencies: ' + mod.dependencies.join(', '))
       }
-      console.log("  Size: " + filesize(mod.size));
-      console.log("  Type: " + mod.type);
-    });
+      console.log('  Size: ' + filesize(mod.size))
+      console.log('  Type: ' + mod.type)
+    })
   }
-});
+})
