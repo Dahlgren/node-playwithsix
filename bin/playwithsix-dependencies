@@ -1,25 +1,25 @@
 #!/usr/bin/env node
 
-var program = require('commander');
+var program = require('commander')
 
-var pws = require('../src/pws');
+var pws = require('../src/pws')
 
 program
   .option('--lite', 'use lite versions of mods where available')
-  .parse(process.argv);
+  .parse(process.argv)
 
-var mods = program.args;
+var mods = program.args
 
 if (!mods.length) {
-  console.error("PlayWithSix dependencies requires at least one mod");
-  process.exit(1);
+  console.error('PlayWithSix dependencies requires at least one mod')
+  process.exit(1)
 }
 
-pws.resolveDependencies(mods, {lite: program.lite === true}, function(err, mods) {
+pws.resolveDependencies(mods, {lite: program.lite === true}, function (err, mods) {
   if (err) {
-    console.error(err);
-    process.exit(1);
+    console.error(err)
+    process.exit(1)
   } else {
-    console.log(mods);
+    console.log(mods)
   }
-});
+})

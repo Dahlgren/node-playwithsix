@@ -16,7 +16,7 @@
     "playwithsix": "./bin/playwithsix"
   },
   "scripts": {
-    "lint": "standard --verbose",
+    "lint": "standard --verbose **/*.js bin/*",
     "test": "./node_modules/mocha/bin/mocha"
   },
   "main": "./src/pws.js",
