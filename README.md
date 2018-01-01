@@ -31,6 +31,8 @@ Install one or more mods
 
 Use `-p` or `--path` to specify a directory other than current working directory
 
+Use `--skip-dependencies` to skip downloading dependencies required
+
 ### Outdated mod
 
 > playwithsix outdated
@@ -78,6 +80,7 @@ Result will contain list of downloaded mods
 #### Options
 
 * lite [bool], Try to use lite version of mods
+* skipDependencies [bool], Skip downloading any required dependencies
 
 ### fetchMods(callback(err, mods))
 
