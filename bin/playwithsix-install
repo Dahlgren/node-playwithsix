@@ -7,6 +7,7 @@ var pws = require('../src/pws');
 
 program
   .option('--lite', 'use lite versions of mods where available')
+  .option('--skip-dependencies', 'skip downloading of other dependencies')
   .option('-p, --path [value]', 'path to directory if other than cwd')
   .parse(process.argv);
 
@@ -23,7 +24,12 @@ if (!program.path) {
 
 var progressBar = new ProgressBar();
 
-pws.downloadMods(program.path, mods, {lite: program.lite === true}, function(err, mods) {
+var options = {
+  lite: program.lite === true,
+  skipDependencies: program.skipDependencies === true
+}
+
+pws.downloadMods(program.path, mods, options, function(err, mods) {
   if (err) {
     console.error(err);
     process.exit(1);

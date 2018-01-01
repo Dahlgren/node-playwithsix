@@ -102,9 +102,11 @@ function downloadMods (destination, modsToDownload, options, cb) {
       if (modsNotFound.length > 0) {
         cb(new Error(modsNotFound.join(', ') + ' not found on Six Updater'), null)
       } else {
-        var toDownload = dependencies.resolveDependenciesForMods(mods, modsToDownload, options)
+        if (!options.skipDependencies) {
+          modsToDownload = dependencies.resolveDependenciesForMods(mods, modsToDownload, options)
+        }
 
-        async.mapLimit(toDownload, 1, function (mod, callback) {
+        async.mapLimit(modsToDownload, 1, function (mod, callback) {
           var modVersions = packages[mod]
 
           if (modVersions) {
