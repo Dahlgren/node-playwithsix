@@ -1,6 +1,7 @@
 module.exports = function (mod) {
   return {
     author: mod.Author,
+    createdAt: mod.CreatedAt,
     dependencies: mod.Dependencies.map(function (dependency) {
       return dependency.toLowerCase()
     }),
@@ -11,6 +12,7 @@ module.exports = function (mod) {
     size: mod.SizeWd,
     tags: mod.Tags,
     title: mod.Name,
-    type: mod.Type
+    type: mod.Type,
+    updatedAt: mod.UpdatedAt
   }
 }
