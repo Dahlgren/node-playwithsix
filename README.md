@@ -29,9 +29,9 @@ Show dependencies for one or more mods
 
 Install one or more mods
 
-Use `-p` or `--path` to specify a directory other than current working directory
-
-Use `--skip-dependencies` to skip downloading dependencies required
+* `--lite` to try to use lite version of mods
+* `-p` or `--path` to specify a directory other than current working directory
+* `--skip-dependencies` to skip downloading dependencies required
 
 ### Outdated mod
 
@@ -39,7 +39,7 @@ Use `--skip-dependencies` to skip downloading dependencies required
 
 List outdated mods
 
-Use `-p` or `--path` to specify a directory other than current working directory
+* `-p` or `--path` to specify a directory other than current working directory
 
 ### Search mods
 
@@ -53,7 +53,9 @@ Search Play withSIX for mods with phrase partially matching their mod name or ti
 
 Update all outdated mods
 
-Use `-p` or `--path` to specify a directory other than current working directory
+* `--lite` to try to use lite version of mods
+* `-p` or `--path` to specify a directory other than current working directory
+* `--skip-dependencies` to skip downloading dependencies required
 
 ## Module
 
