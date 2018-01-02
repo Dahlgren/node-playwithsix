@@ -15,7 +15,7 @@ module.exports = function (mod) {
     }),
     id: mod.Id,
     imageUrl: imageUrl,
-    latestStableVersion: mod.latestStableVersion,
+    latestStableVersion: mod.LatestStableVersion,
     latestVersion: mod.Version,
     name: mod.PackageName.toLowerCase(),
     size: mod.SizeWd,
