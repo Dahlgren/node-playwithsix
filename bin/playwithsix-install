@@ -7,8 +7,8 @@ var pws = require('../src/pws')
 
 program
   .option('--lite', 'use lite versions of mods where available')
-  .option('--skip-dependencies', 'skip downloading of other dependencies')
   .option('-p, --path [value]', 'path to directory if other than cwd')
+  .option('--skip-dependencies', 'skip downloading of other dependencies')
   .parse(process.argv)
 
 var mods = program.args
