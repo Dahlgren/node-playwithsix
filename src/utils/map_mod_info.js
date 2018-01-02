@@ -1,6 +1,12 @@
+var url = require ('url')
 var constants = require('../constants')
 
 module.exports = function (mod) {
+  var imageUrl = null
+  if (mod.ImagePath) {
+    imageUrl = url.resolve(constants.images.rootUrl, mod.ImagePath)
+  }
+
   return {
     author: mod.Author,
     createdAt: mod.CreatedAt,
@@ -8,7 +14,7 @@ module.exports = function (mod) {
       return dependency.toLowerCase()
     }),
     id: mod.Id,
-    image: constants.images.rootUrl + mod.ImagePath,
+    imageUrl: imageUrl,
     latestStableVersion: mod.latestStableVersion,
     latestVersion: mod.Version,
     name: mod.PackageName.toLowerCase(),
