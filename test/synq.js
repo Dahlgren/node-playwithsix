@@ -5,7 +5,7 @@ describe('synq', function () {
   describe('convertWindowsFilePath', function () {
     it('should convert backslash to forward slash', function (done) {
       synq.convertWindowsFilePath('path\\with\\subdirectories')
-           .should.eql('path/with/subdirectories')
+        .should.eql('path/with/subdirectories')
       done()
     })
   })
